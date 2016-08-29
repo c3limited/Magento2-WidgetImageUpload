@@ -47,14 +47,15 @@ class ImageChooser extends Template
         $sourceUrl = $this->getUrl('cms/wysiwyg_images/index',
             ['target_element_id' => $element->getId(), 'type' => 'file']);
 
-        $chooser = $this->getLayout()->createBlock(Button::class)
+        /** @var \Magento\Backend\Block\Widget\Button $chooser */
+        $chooser = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Button')
                         ->setType('button')
                         ->setClass('btn-chooser')
                         ->setLabel($config['button']['open'])
                         ->setOnClick('MediabrowserUtility.openDialog(\'' . $sourceUrl . '\')')
                         ->setDisabled($element->getReadonly());
-
-        /** @var Text $input */
+        $chooser->_jsUrl = '/static/adminhtml/Magento/backend/en_US/mage/adminhtml/browser.js';
+        /** @var \Magento\Framework\Data\Form\Element\Text $input */
         $input = $this->_elementFactory->create("text", ['data' => $element->getData()]);
         $input->setId($element->getId());
         $input->setForm($element->getForm());

@@ -31,6 +31,7 @@ To add an Image, you have to add a parameter like this in your widget.xml:
 ## ToDo
 
 * Add Unit and Integration Tests
+* Require the JS Component more pretty, so we can remove the plain html script-tag from the block
 
 ## Requirements
 

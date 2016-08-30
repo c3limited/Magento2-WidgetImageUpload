@@ -52,9 +52,9 @@ class ImageChooser extends Template
                         ->setType('button')
                         ->setClass('btn-chooser')
                         ->setLabel($config['button']['open'])
-                        ->setOnClick('MediabrowserUtility.openDialog(\'' . $sourceUrl . '\')')
+                        ->setOnClick('MediabrowserUtility.openDialog(\'' . $sourceUrl . '\', 0, 0, "MediaBrowser", {})')
                         ->setDisabled($element->getReadonly());
-        $chooser->_jsUrl = '/static/adminhtml/Magento/backend/en_US/mage/adminhtml/browser.js';
+
         /** @var \Magento\Framework\Data\Form\Element\Text $input */
         $input = $this->_elementFactory->create("text", ['data' => $element->getData()]);
         $input->setId($element->getId());
@@ -64,7 +64,8 @@ class ImageChooser extends Template
             $input->addClass('required-entry');
         }
 
-        $element->setData('after_element_html', $input->getElementHtml() . $chooser->toHtml());
+        $element->setData('after_element_html', $input->getElementHtml()
+            . $chooser->toHtml() . "<script>require(['mage/adminhtml/browser']);</script>");
 
         return $element;
     }

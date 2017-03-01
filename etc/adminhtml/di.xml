@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\OnInsert"
+                type="Dlambauer\WidgetImageUpload\Controller\Adminhtml\Wysiwyg\Images\OnInsert"/>
+    <type name="Magento\Cms\Block\Adminhtml\Wysiwyg\Images\Content">
+        <plugin name="AddMediaPathOptionToSetupObject"
+                type="Dlambauer\WidgetImageUpload\Plugin\Cms\Block\Adminhtml\Wysiwyg\Images\Content"
+                sortOrder="10"
+                disabled="false"/>
+    </type>
+</config>

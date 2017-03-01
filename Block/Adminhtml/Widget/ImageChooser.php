@@ -47,12 +47,17 @@ class ImageChooser extends Template
         $sourceUrl = $this->getUrl('cms/wysiwyg_images/index',
             ['target_element_id' => $element->getId(), 'type' => 'file']);
 
+
+        /**
+         * @mod: Pass in media_path_only param.
+         */
+
         /** @var \Magento\Backend\Block\Widget\Button $chooser */
         $chooser = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Button')
                         ->setType('button')
                         ->setClass('btn-chooser')
                         ->setLabel($config['button']['open'])
-                        ->setOnClick('MediabrowserUtility.openDialog(\'' . $sourceUrl . '\', 0, 0, "MediaBrowser", {})')
+                        ->setOnClick('MediabrowserUtility.openDialog(\'' . $sourceUrl . '\', 0, 0, "MediaBrowser", { media_path_only: true })')
                         ->setDisabled($element->getReadonly());
 
         /** @var \Magento\Framework\Data\Form\Element\Text $input */
@@ -64,8 +69,42 @@ class ImageChooser extends Template
             $input->addClass('required-entry');
         }
 
+        /**
+         * @mod: Overridden media browser utility open dialog function to pass new media_path_only param. Changed require
+         * param to use our custom media browser which makes use of this param.
+         */
         $element->setData('after_element_html', $input->getElementHtml()
-            . $chooser->toHtml() . "<script>require(['mage/adminhtml/browser']);</script>");
+            . $chooser->toHtml() . "<script>require(['Dlambauer_WidgetImageUpload/mage/mediabrowser', 'jquery'], function(browser, $) {
+                        MediabrowserUtility.openDialog = function(url, width, height, title, options) {
+            var windowId = this.windowId,
+                content = '<div class=\"popup-window magento-message\" \"id=\"' + windowId + '\"></div>',
+                self = this;
+
+            if (this.modal) {
+                this.modal.html($(content).html());
+                this.modal.modal('option', 'closed', options.closed);
+            } else {
+                this.modal = $(content).modal($.extend({
+                    title:  title || 'Insert File...',
+                    modalClass: 'magento',
+                    type: 'slide',
+                    buttons: []
+                }, options));
+            }
+            this.modal.modal('openModal');
+            $.ajax({
+                url: url,
+                type: 'get',
+                context: $(this),
+                showLoader: true,
+                data: {
+                    media_path_only: options.media_path_only || false
+                }
+            }).done(function(data) {
+                self.modal.html(data).trigger('contentUpdated');
+            });
+        };     
+            });</script>");
 
         return $element;
     }
